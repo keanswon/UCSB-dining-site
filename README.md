@@ -10,3 +10,4 @@ Goals:
 Progress:
 
 - 4/18: Laid out files, began building web scraper
+- 4/19: Finishing touches to web scraper: sorting out duplicate headers, began working with UCSB dining API
