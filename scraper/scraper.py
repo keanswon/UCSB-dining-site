@@ -1,3 +1,14 @@
+"""
+
+TLDR on how this works:
+    We use click_hall() and click_ortega() to click into specific dining halls. When using click_hall, we use
+    another function, click_each_meal_and_scrape() to click into every "lunch", "brunch", "dinner", and "breakfast"
+    on the page. The common goal is to arrive on the final page with every single food item listed out, where we
+    can then call scrape_all_items() to get the nutritional value for all the items and export it to a csv.
+
+TODO: change filepath for csv to database folder
+
+"""
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -45,6 +56,7 @@ def main():
 
 
 # function that clicks into each item on the page and scrapes the nutrition label
+# used once we arrive at the page that lists all the items served during breakfast, brunch, lunch, or dinner
 def scrape_all_items(driver):
     wait = WebDriverWait(driver, 10)
     wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "a.cbo_nn_itemHover")))
