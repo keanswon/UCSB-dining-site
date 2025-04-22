@@ -26,6 +26,13 @@ Remaking UI for UCSB's dining
 - utils.py: helper functions, like export_to_csv
 - mostly complete, still has to sort filepaths
 
+**TODO**
+
+- Top priority: map everything out
+- Figure out how to deal with the new items coming in every day
+- Begin front-end
+- Learn Django for backend
+
 **Progress**:
 
 - 4/18: Laid out files, began building web scraper
