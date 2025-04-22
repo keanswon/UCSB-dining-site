@@ -30,3 +30,4 @@ Remaking UI for UCSB's dining
 
 - 4/18: Laid out files, began building web scraper
 - 4/19: Finishing touches to web scraper: sorting out duplicate headers, began working with UCSB dining API
+- 4/21: wrote script to transfer csv to SQL database, merged columns

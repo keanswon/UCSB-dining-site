@@ -73,7 +73,7 @@ def scrape_all_items(driver):
 
     results = []
     # sub range in for count when actually runnning it
-    for i in range(1):
+    for i in range(count):
         # re-find anchors
         items = driver.find_elements(By.CSS_SELECTOR, "a.cbo_nn_itemHover")
         item = items[i]
