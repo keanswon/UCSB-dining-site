@@ -17,12 +17,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from utils import export_to_csv, export_array, get_date
+from utils import export_to_csv
+import os
 
 import time # used for testing
 
 opts = Options()
-# opts.add_argument("--headless") # turn off for debugging, hides tab
+opts.add_argument("--headless") # turn off for debugging, hides tab
 service = Service(ChromeDriverManager().install())
 driver  = webdriver.Chrome(service=service, options=opts)
 
@@ -42,17 +43,24 @@ def main():
         flat = [item for sub in hall_data for item in sub]
 
         # dedupe before exporting or appending to all_data
-        flat = dedupe_results(flat)
+        # flat = dedupe_results(flat)
         all_data.extend(flat)
         return_home(driver)
 
     print("ortega in progress....")
     ortega_data = click_ortega(driver, takeout)
-    ortega_data = dedupe_results(ortega_data)
+    # ortega_data = dedupe_results(ortega_data)
     all_data.extend(ortega_data)
+    all_data = dedupe_results(all_data)
+
+
+    # create filepath
+    this_dir = os.path.dirname(__file__)
+    project_root = os.path.abspath(os.path.join(this_dir, os.pardir))
+    db_dir = os.path.join(project_root, 'database')
 
     # now all_data has no duplicate names across halls/meals
-    export_to_csv(all_data, mode='w', filename='full_export.csv')
+    export_to_csv(all_data, db_dir, mode='w', filename='full_export.csv')
 
 
 # function that clicks into each item on the page and scrapes the nutrition label

@@ -4,7 +4,7 @@ from datetime import datetime
 import os
 
 # export function from chatgpt. formats it very nicely to put in sql database
-def export_to_csv(results, mode='w', filename="nutrition_breakdown.csv"):
+def export_to_csv(results, filepath, mode='w', filename="nutrition_breakdown.csv"):
     """
     Parses a list of (item_name, nutrition_text) tuples into a CSV
     with columns Name, Serving Size, each nutrient, and Ingredients.
@@ -74,11 +74,49 @@ def export_to_csv(results, mode='w', filename="nutrition_breakdown.csv"):
 
         parsed_rows.append(row)
 
-    # build headers, deduplicated and sorted
-    write_header = (mode == 'w') or (not os.path.exists(filename))
-    headers = ["Name"] + sorted(all_nutrients)
+    for idx, row in enumerate(parsed_rows, start=1):
+        row['id'] = idx
 
-    with open(filename, mode, newline='', encoding='utf-8') as f:
+    # merge protein columns
+    if "Protein <" in all_nutrients:
+        for row in parsed_rows:
+            if "Protein <" in row:
+                row["Protein"] = row.get("Protein") or row.pop("Protein <")
+        all_nutrients.discard("Protein <")
+
+    # convert cells to floats
+    nutrient_units = {}
+    for row in parsed_rows:
+        for nutr in list(all_nutrients):
+            val = row.get(nutr)
+            if not isinstance(val, str):
+                continue
+            m = re.match(r'^([\d.]+)([a-zA-Z%]+)$', val)
+            if m:
+                num, unit = m.groups()
+                row[nutr] = float(num)
+                nutrient_units[nutr] = unit
+
+    new_nutrients = set()
+    for nutr in all_nutrients:
+        if nutr in nutrient_units:
+            new_name = f"{nutr}_{nutrient_units[nutr].lower()}"
+            new_nutrients.add(new_name)
+            for row in parsed_rows:
+                if nutr in row:
+                    row[new_name] = row.pop(nutr)
+        else:
+            new_nutrients.add(nutr)
+    all_nutrients = new_nutrients
+
+
+    # build headers, deduplicated and sorted
+    full_path = os.path.join(filepath, filename)
+
+    write_header = (mode == 'w') or (not os.path.exists(full_path))
+    headers = ['id', 'Name'] + sorted(all_nutrients)
+
+    with open(full_path, mode, newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=headers)
         if write_header:
             writer.writeheader()

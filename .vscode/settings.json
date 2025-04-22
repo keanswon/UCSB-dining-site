@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "${workspaceFolder:UCSB nutrition}/database/nutrition.db",
+            "name": "Nutrition"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
